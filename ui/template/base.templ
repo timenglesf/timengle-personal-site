@@ -1,0 +1,28 @@
+package template
+
+import (
+	"github.com/timenglesf/personal-site/ui/template/partials"
+	"github.com/timenglesf/personal-site/internal/shared"
+)
+
+templ Base(title string, page templ.Component, data *shared.TemplateData) {
+	<html data-theme="mytheme mytheme ">
+		<head>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>{ title }</title>
+			<link rel="stylesheet" href="/static/dist/style/styles.css"/>
+			<script defer src="/static/dist/js/form-prevent.js"></script>
+			<script defer src="/static/dist/js/app.js"></script>
+			<script defer src="/static/dist/js/htmx.min.js"></script>
+			// <script defer src="https://cdn.jsdelivr.net/npm/theme-change@2.0.2/index.js"></script>
+		</head>
+		<body class="flex flex-col min-h-screen bg-base-100 text-base-content">
+			@partials.PageHeader(data)
+			<div id="response"></div>
+			<main class="flex-grow">
+				@page
+			</main>
+			@partials.PageFooter(data)
+		</body>
+	</html>
+}

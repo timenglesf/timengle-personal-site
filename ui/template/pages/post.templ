@@ -1,0 +1,40 @@
+package pages
+
+import (
+	"github.com/timenglesf/personal-site/internal/shared"
+	"time"
+)
+
+func ShouldShowUpdatedAt(createdAt, updatedAt time.Time) bool {
+	return updatedAt.Sub(createdAt) >= 6*time.Hour
+}
+
+templ Post(d *shared.TemplateData) {
+	<div class="flex flex-col max-w-[90%] mb-4">
+		<h1 class="text-4xl mb-2">{ d.BlogPost.Title }</h1>
+		if d.Flash.Type != "" {
+			@DisplayFlashAlert(d)
+		}
+		<p class="date">{ d.BlogPost.CreatedAt.Weekday().String() } { shared.HumanDate( d.BlogPost.CreatedAt) }</p>
+		if ShouldShowUpdatedAt(d.BlogPost.CreatedAt, d.BlogPost.UpdatedAt) {
+			<p class="date">Last updated: { d.BlogPost.UpdatedAt.Weekday().String() } { shared.HumanDate( d.BlogPost.UpdatedAt) }</p>
+		}
+	</div>
+	<article
+		class="
+    mx-auto 
+    max-w-[80%]
+    prose 
+    prose-sm
+    prose-code:font-sans
+    prose-pre:font-sans
+    prose-headings:font-sans
+    hover:prose-a:text-info
+    prose-a:duration-300
+    lg:prose-lg
+
+	"
+	>
+		@shared.Unsafe(d.BlogPost.Content)
+	</article>
+}

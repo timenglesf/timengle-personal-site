@@ -1,0 +1,53 @@
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Set up Go environment
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22.1"
+
+      # Build the production binary
+      - name: Build Binary
+        run: ./scripts/buildprod.sh
+
+      # Authenticate with Google Cloud
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      # Set up the Google Cloud SDK
+      - name: Setup GCP SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      # Verify gcloud CLI setup
+      - name: Use gcloud cli
+        run: gcloud info
+
+      # Build and push the Docker image to Artifact Registry
+      - name: Build & Push image to Artifact Registry
+        run: |
+          gcloud builds submit \
+            --tag us-west1-docker.pkg.dev/timengledev-blog/app/timengledev-blog:latest .
+
+      # Deploy the container image to Cloud Run
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy timengledev-blog \
+            --image us-west1-docker.pkg.dev/timengledev-blog/app/timengledev-blog:latest \
+            --region us-west1 \
+            --allow-unauthenticated \
+            --project timengledev-blog \
+            --max-instances=4

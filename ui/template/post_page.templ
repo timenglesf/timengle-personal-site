@@ -1,0 +1,37 @@
+
+package template
+
+import (
+	"github.com/timenglesf/personal-site/ui/template/partials"
+	"github.com/timenglesf/personal-site/internal/shared"
+	"net/url"
+)
+
+templ PostBase(title string, page templ.Component, data *shared.TemplateData) {
+	<html data-theme="mytheme mytheme ">
+		<head>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>{ title }</title>
+			<link rel="stylesheet" href="/static/dist/style/styles.css"/>
+			// <link rel="stylesheet" href="/static/dist/style/posts.css"/>
+			<script defer src="/static/dist/js/form-prevent.js"></script>
+			<script defer src="/static/dist/js/app.js"></script>
+			<script defer src="/static/dist/js/htmx.min.js"></script>
+			<link rel="preconnect" href="https://fonts.googleapis.com"/>
+			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+			<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet"/>
+			<meta property="og:title" content={ data.BlogPost.Title }/>
+			<meta property="og:image" content="/static/dist/img/icon_sm.png"/>
+			<meta property="og:url" content={ "https://timengle.dev/posts/view/" + url.QueryEscape(data.BlogPost.Title) }/>
+			<meta property="og:type" content="article"/>
+		</head>
+		<body class="flex flex-col min-h-screen bg-base-100 text-base-content">
+			@partials.PageHeader(data)
+			<div id="response"></div>
+			<main class="mx-auto flex-grow mb-6 container font-poppins">
+				@page
+			</main>
+			@partials.PageFooter(data)
+		</body>
+	</html>
+}

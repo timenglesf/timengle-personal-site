@@ -1,0 +1,10 @@
+[build]
+  cmd = "go build -o ./tmp/main ./cmd/web"
+  bin = "./tmp/main"
+  full_bin = "APP_ENV=dev APP_USER=air ./tmp/main"
+  include_ext = ["go", "templ", "html", "js", "css"]
+  exclude_dir = ["assets", "tmp", "vendor", "node_modules"]
+
+[log]
+  level = "info"
+

@@ -1,0 +1,22 @@
+package pages
+
+import (
+	"github.com/timenglesf/personal-site/internal/shared"
+	"github.com/timenglesf/personal-site/ui/template/components"
+)
+
+templ AboutPage(d *shared.TemplateData) {
+	<div class="flex justify-center container mx-auto h-full">
+		<div class="flex gap-4 bg-primary h-14 w-60 justify-center items-center rounded-lg mx-auto">
+			<a href="https://linkedin.com/in/tim-engle" target="_blank">
+				@components.LinkedInIcon("10")
+			</a>
+			<a href="https://github.com/timenglesf" target="_blank">
+				@components.GitHubIcon("10")
+			</a>
+			<a href="https://x.com/TimEngleCodes" target="_blank">
+				@components.TwitterIcon("10")
+			</a>
+		</div>
+	</div>
+}

@@ -1,0 +1,39 @@
+package pages
+
+import (
+	"github.com/timenglesf/personal-site/internal/shared"
+	"github.com/timenglesf/personal-site/ui/template/components"
+)
+
+templ labelDisplay(val string) {
+	<label class="text-lg" for="title">{ val }</label>
+}
+
+templ CreatePost(data *shared.TemplateData) {
+	<main class="container mx-auto h-[calc(100vh-144px)]">
+		<div class="mx-auto w-2/3 h-full flex flex-col">
+			if data.BlogForm.FieldErrors["title"] != "" {
+				@components.WarningAlert(data.BlogForm.FieldErrors["title"], "title_warning", "mb-6")
+			}
+			if data.BlogForm.FieldErrors["content"] != "" && data.BlogForm.FieldErrors["title"] == "" {
+				@components.WarningAlert(data.BlogForm.FieldErrors["content"], "content_warning", "mb-6")
+			}
+			<form class="flex flex-col h-full" action="/posts/create" method="post">
+				<div class="flex flex-col justify-start mb-4">
+					@labelDisplay("Title:")
+					@components.TitleInputDisplay(data.BlogForm.Title)
+				</div>
+				//	<div class="flex flex-col flex-grow justify-start mb-6 max-h-2/3-screen">
+				<div class="flex flex-col flex-grow justify-start mb-6">
+					@labelDisplay("Content:")
+					@components.TextAreaInputDisplay(data.BlogForm.Content)
+					<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+				</div>
+				<div class="mt-4">
+					<button class="btn btn-primary" type="submit">Create Post</button>
+					<button class="btn btn-accent text-primary-content" type="button">Preview</button>
+				</div>
+			</form>
+		</div>
+	</main>
+}
