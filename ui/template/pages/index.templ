@@ -1,0 +1,30 @@
+package pages
+
+import (
+	"github.com/timenglesf/personal-site/internal/models"
+	"github.com/timenglesf/personal-site/internal/shared"
+	"net/url"
+)
+
+templ blogPostLink(b models.Post) {
+	<li><a href={ templ.SafeURL("posts/view/" + url.QueryEscape(b.Title)) } class="link text-lg hover:text-primary duration-300">{ b.Title }</a></li>
+}
+
+// import "github.com/timenglesf/personal-site/internal/shared"
+templ Index(data *shared.TemplateData) {
+	<div class="container mx-auto">
+		<div class="p-8 text-default-content text-center lg:border border-primary rounded-lg">
+			<h1 class="text-4xl font-bold">Hello, I'm Tim!</h1>
+			<p class="text-xl mt-4">
+				I'm a backend engineer dedicated to mastering Go and writing about what I learn. This is a place for me to share things I find interesting and updates on projects I am working on. When I'm not coding, I'm out cycling.
+			</p>
+			<div class="divider my-6"></div>
+			<h2 class="text-2xl font-semibold">Blog Posts</h2>
+			<ul class="flex flex-col gap-2 mt-4">
+				for _, b := range data.BlogPosts {
+					@blogPostLink(b)
+				}
+			</ul>
+		</div>
+	</div>
+}

@@ -1,0 +1,17 @@
+
+package partials
+
+import "github.com/timenglesf/personal-site/internal/shared"
+import "strconv"
+
+templ PageFooter(d *shared.TemplateData) {
+	<footer class="bottom-0 h-8">
+		<div class="">
+			<div class="row">
+				<div class="col-lg-12 text-center">
+					<p>&copy; { strconv.Itoa( d.CurrentYear) } Tim Engle. All rights reserved.</p>
+				</div>
+			</div>
+		</div>
+	</footer>
+}

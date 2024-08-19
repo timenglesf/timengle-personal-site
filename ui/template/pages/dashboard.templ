@@ -1,0 +1,69 @@
+package pages
+
+import (
+	//	"net/url"
+	"github.com/timenglesf/personal-site/internal/models"
+	"github.com/timenglesf/personal-site/internal/shared"
+	"net/url"
+	"strconv"
+)
+
+templ DashboardBlogPostRow(b *models.Post) {
+	<tr>
+		<td><a href={ templ.SafeURL("/posts/view/" + url.QueryEscape(b.Title)) }></a>{ b.Title }</td>
+		<td>{ shared.HumanDate( b.CreatedAt) }</td>
+		<td>
+			<label>
+				if b.Private {
+					<input type="checkbox" class="checkbox" hx-post={ "/posts/update/" + url.QueryEscape(b.Title) + "?private=" + strconv.FormatBool(b.Private) } checked/>
+				} else {
+					<input type="checkbox" class="checkbox" hx-post={ "/posts/update/" + url.QueryEscape(b.Title) + "?private=" + strconv.FormatBool(b.Private) }/>
+				}
+			</label>
+		</td>
+		<td>
+			<button hx-get={ "/posts/edit/" + strconv.Itoa(int(b.ID)) } hx-target="main" hx-trigger="click" hx-swap="innerHTML" type="button" class="btn btn-accent text-primary-content">Edit</button>
+			<a href={ templ.SafeURL("/posts/view/" + url.QueryEscape(b.Title)) }><button type="button" class="btn btn-secondary text-primary-content">View</button></a>
+		</td>
+	</tr>
+}
+
+func ButtonTotal(count int) int {
+	buttonCount := count / 10
+	if count%10 != 0 {
+		buttonCount++
+	}
+	return buttonCount
+}
+
+templ Pagination(count int, current int) {
+	<div class="join mx-auto">
+		<button class="join-item btn">«</button>
+		<button class="join-item btn">{ strconv.Itoa(current) }</button>
+		<button class="join-item btn">»</button>
+	</div>
+}
+
+templ AdminDashboard(d *shared.TemplateData) {
+	<div class="container flex flex-col mx-auto">
+		<h1 class="mx-auto mb-6 text-3xl font-semibold text-primary">Admin Dashboard</h1>
+		<table class="table mb-4">
+			<thead class="text-xl">
+				<tr>
+					<th>Title</th>
+					<th>Created At</th>
+					<th>Private</th>
+					<th>Options</th>
+				</tr>
+			</thead>
+			<tbody>
+				for _, post := range d.BlogPosts {
+					@DashboardBlogPostRow(&post)
+				}
+			</tbody>
+		</table>
+		@Pagination(ButtonTotal(d.TotalPostCount), d.CurrentPage)
+		<a href="/posts/create" type="button" class="hidden md:inline-flex items-center justify-center btn btn-info text-xl text-primary-content rounded-full fixed top-[10%] right-[10%]">+ Add Post</a>
+		<a href="/posts/create" type="button" class="md:hidden inline-flex items-center justify-center btn btn-info text-xl text-primary-content rounded-full fixed top-[10%] right-[10%]">+</a>
+	</div>
+}

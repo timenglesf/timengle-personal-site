@@ -1,0 +1,234 @@
+/* Styles for the post-page content */
+.post-page {
+    /* Styles for print */
+    @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: ' (' attr(href) ')';
+        }
+
+        abbr[title]:after {
+            content: ' (' attr(title) ')';
+        }
+
+        a[href^='#']:after,
+        a[href^='javascript:']:after {
+            content: '';
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+    }
+
+    /* Hyperlink styles */
+    a:hover,
+    a:focus,
+    a:active {
+        color: #5999b6;
+    }
+
+    a {
+        color: #0077cc;
+        text-decoration: underline;
+    }
+
+    .retro-no-decoration {
+        text-decoration: none;
+    }
+
+    /* Main content font size */
+    .main {
+        font-size: 12px;
+    }
+
+    /* Responsive font sizes */
+    @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        #main-content {
+            font-size: 15px;
+        }
+    }
+
+    @media screen and (min-width: 48rem) {
+        #main-content {
+            font-size: 16px;
+        }
+    }
+
+    /* Content line height */
+    .content {
+        line-height: 1.85;
+    }
+
+    /* Paragraph and retro paragraph styling */
+    p,
+    .retro-p {
+        font-size: 1.25rem;
+        margin-bottom: 1.3rem;
+        font-family: Poppins, sans-serif;
+    }
+
+    /* Heading styles */
+    h1,
+    .retro-h1,
+    h2,
+    .retro-h2,
+    h3,
+    .retro-h3,
+    h4,
+    .retro-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+    }
+
+    h1,
+    .retro-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+    }
+
+    h2,
+    .retro-h2 {
+        font-size: 2.827rem;
+    }
+
+    h3,
+    .retro-h3 {
+        font-size: 1.999rem;
+    }
+
+    h4,
+    .retro-h4 {
+        font-size: 1.414rem;
+    }
+
+    h5,
+    .retro-h5 {
+        font-size: 1.121rem;
+    }
+
+    h6,
+    .retro-h6 {
+        font-size: 0.88rem;
+    }
+
+    /* Heading font-family and weight */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: 'Courier New', Courier, monospace;
+        font-weight: 500;
+    }
+
+    /* Small text styling */
+    small,
+    .retro-small {
+        font-size: 0.707em;
+    }
+
+    /* Fluidity styles */
+    img,
+    canvas,
+    iframe,
+    video,
+    svg,
+    select,
+    textarea {
+        max-width: 100%;
+    }
+
+    /* Main content styling */
+    #main-content {
+        font-size: 18px;
+        line-height: 1.45;
+        font-family: Arial, sans-serif;
+    }
+
+    /* Preformatted text and blockquote styling */
+    pre {
+        line-height: 1.25;
+        overflow-x: scroll;
+        padding: 1rem;
+    }
+
+    blockquote {
+        border-left: 3px solid #01ff70;
+        padding-left: 1rem;
+    }
+
+    pre,
+    code {
+        font-family: Menlo, Monaco, 'Courier New', monospace;
+    }
+
+    /* List styling to prevent inheritance issues */
+    ul,
+    ol {
+        list-style: square;
+        margin-left: 1.5rem;
+        padding-left: 0;
+        list-style-position: inside;
+    }
+
+    li {
+        margin-bottom: 0.5rem;
+    }
+
+    .title {
+        font-family: Poppins, sans-serif;
+        font-size: 2.5rem;
+    }
+
+    pre + hr {
+        margin: 2rem 0;
+    }
+
+    ul,
+    ol + p {
+        margin-top: 1.5rem;
+    }
+}

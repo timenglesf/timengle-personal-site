@@ -1,0 +1,42 @@
+package pages
+
+import (
+	"github.com/timenglesf/personal-site/internal/shared"
+	"github.com/timenglesf/personal-site/ui/template/components"
+)
+
+templ SignUpAdmin(data *shared.TemplateData) {
+	<div class="mx-auto w-1/2 max-w-2xl">
+		if data.Flash.Type != "" {
+			@DisplayFlashAlert(data)
+		}
+		<form action="/admin/signup" method="post" class="">
+			// Alert message
+			if data.SignUpForm.FieldErrors["email"] != "" {
+				@components.WarningAlert(data.SignUpForm.FieldErrors["email"], "email_warning", "mb-6")
+			} else if data.SignUpForm.FieldErrors["confirm_email"] != "" {
+				@components.WarningAlert(data.SignUpForm.FieldErrors["confirm_email"], "confirm_email_warning", "mb-6")
+			} else if data.SignUpForm.FieldErrors["display_name"] != "" {
+				@components.WarningAlert(data.SignUpForm.FieldErrors["display_name"], "display_name_warning", "mb-6")
+			} else if data.SignUpForm.FieldErrors["password"] != "" {
+				@components.WarningAlert(data.SignUpForm.FieldErrors["password"], "password_warning", "mb-6")
+			} else if data.SignUpForm.FieldErrors["confirm_password"] != "" {
+				@components.WarningAlert(data.SignUpForm.FieldErrors["confirm_password"], "confirm_password_warning", "mb-6")
+			}
+			<div class="flex flex-col gap-2 mb-6">
+				// Email input
+				@components.EmailInput(data.SignUpForm.Email, "email", "Email")
+				// Confirm email input
+				@components.EmailInput(data.SignUpForm.ConfirmEmail, "confirm_email", "Confirm Email")
+				// Display name input
+				@components.DisplayNameInput(data.SignUpForm.DisplayName, "John Smith")
+				// Password input
+				@components.PasswordInput("password", "Password")
+				// Confirm password input
+				@components.PasswordInput("confirm_password", "Confirm Password")
+				@CSRFHiddenInput(data)
+			</div>
+			<button class="btn btn-primary" type="submit">Submit</button>
+		</form>
+	</div>
+}
