@@ -11,9 +11,6 @@ import (
 func (app *application) routes() http.Handler {
 	mux := http.NewServeMux()
 
-	// fileServer := http.FileServerFS(ui.Files)
-	// mux.Handle("/static/", fileServer)
-
 	var fileSvr http.Handler
 	if app.cfg.objectStorage.serveStaticObjectStorage {
 		fileSvr = &fileserver.ObjectStorageFileServer{ObjectStorageURL: app.cfg.objectStorage.objectStorageURL}
@@ -21,7 +18,7 @@ func (app *application) routes() http.Handler {
 		fileSvr = &fileserver.EmbeddedFileServer{FS: http.FS(ui.Files)}
 	}
 
-	mux.Handle("/static/", fileSvr)
+	mux.Handle("/static/", app.staticCacheHeaders(fileSvr))
 
 	dynamic := alice.New(app.sessionManager.LoadAndSave, app.noSurf)
 	mux.Handle("GET /{$}", dynamic.ThenFunc(app.home))
@@ -40,7 +37,6 @@ func (app *application) routes() http.Handler {
 	mux.Handle("GET /posts/edit/{slug}", adminProtected.ThenFunc(app.handleDisplayEditPostForm))
 	mux.Handle("POST /posts/edit", adminProtected.ThenFunc(app.handleBlogPostEdit))
 	// Admin routes
-	//
 
 	mux.Handle("GET /admin/{$}", dynamic.ThenFunc(app.handleDisplayAdminPage))
 	mux.Handle("GET /admin/signup", dynamic.ThenFunc(app.handleAdminSignupPage))
