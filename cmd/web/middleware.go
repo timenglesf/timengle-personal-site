@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/justinas/nosurf"
 )
@@ -89,6 +90,15 @@ func (app *application) requireAdmin(next http.Handler) http.Handler {
 
 		w.Header().Add("Cache-Control", "no-store")
 
+		next.ServeHTTP(w, r)
+	})
+}
+
+func (app *application) staticCacheHeaders(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasPrefix(r.URL.Path, "/static/") {
+			w.Header().Add("Cache-Control", "public, max-age=100000")
+		}
 		next.ServeHTTP(w, r)
 	})
 }
