@@ -1,4 +1,3 @@
-timengledev_blog
 db/app.db
 db/migrations/*.sql
 app.db
