@@ -9,6 +9,18 @@ templ labelDisplay(val string) {
 	<label class="text-lg" for="title">{ val }</label>
 }
 
+func renderFrontMatter() string {
+	frontMatter := `+++
+title = "Title"
+date = "2024-08-10"
+description = "Description"
+private = true
+headerImage = "images/cover.jpg"
++++`
+	return frontMatter
+
+}
+
 templ CreatePost(data *shared.TemplateData) {
 	<main class="container mx-auto h-[calc(100vh-144px)]">
 		<div class="mx-auto w-2/3 h-full flex flex-col">
@@ -19,14 +31,14 @@ templ CreatePost(data *shared.TemplateData) {
 				@components.WarningAlert(data.BlogForm.FieldErrors["content"], "content_warning", "mb-6")
 			}
 			<form class="flex flex-col h-full" action="/posts/create" method="post">
-				<div class="flex flex-col justify-start mb-4">
-					@labelDisplay("Title:")
-					@components.TitleInputDisplay(data.BlogForm.Title)
-				</div>
 				//	<div class="flex flex-col flex-grow justify-start mb-6 max-h-2/3-screen">
 				<div class="flex flex-col flex-grow justify-start mb-6">
 					@labelDisplay("Content:")
-					@components.TextAreaInputDisplay(data.BlogForm.Content)
+					if data.BlogForm.Content == "" {
+						@components.TextAreaInputDisplay(renderFrontMatter())
+					} else {
+						@components.TextAreaInputDisplay(data.BlogForm.Content)
+					}
 					<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
 				</div>
 				<div class="mt-4">

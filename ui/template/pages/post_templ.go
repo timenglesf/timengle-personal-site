@@ -32,7 +32,7 @@ func Post(d *shared.TemplateData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex flex-col max-w-[90%] mb-4\"><h1 class=\"text-4xl mb-2\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex flex-col mb-14 max-w-[90%]\"><h1 class=\"text-4xl mb-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -60,9 +60,9 @@ func Post(d *shared.TemplateData) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(d.BlogPost.CreatedAt.Weekday().String())
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(d.BlogPost.Date.Weekday().String())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/template/pages/post.templ`, Line: 18, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/template/pages/post.templ`, Line: 18, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -73,9 +73,9 @@ func Post(d *shared.TemplateData) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(shared.HumanDate(d.BlogPost.CreatedAt))
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(shared.HumanDate(d.BlogPost.Date))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/template/pages/post.templ`, Line: 18, Col: 103}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/template/pages/post.templ`, Line: 18, Col: 93}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -85,7 +85,7 @@ func Post(d *shared.TemplateData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if ShouldShowUpdatedAt(d.BlogPost.CreatedAt, d.BlogPost.UpdatedAt) {
+		if ShouldShowUpdatedAt(d.BlogPost.Date, d.BlogPost.UpdatedAt) {
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<p class=\"date\">Last updated: ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

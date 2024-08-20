@@ -46,6 +46,7 @@ type config struct {
 	port          string
 	db            psqlConfig
 	objectStorage objectStorageConfig
+	environment   string
 }
 
 type psqlConfig struct {
@@ -61,6 +62,14 @@ func (c *psqlConfig) setDSN() {
 	c.dsn = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", c.host, c.port, c.user, c.password, c.name)
 }
 
+func (c *psqlConfig) setDevDSN() {
+	c.dsn = fmt.Sprintf("host=%s port=%s dbname=%s sslmode=disable", c.host, c.port, c.name)
+}
+
+func (c *psqlConfig) getDSN() string {
+	return c.dsn
+}
+
 type objectStorageConfig struct {
 	objectStorageURL         string
 	serveStaticObjectStorage bool
@@ -68,11 +77,20 @@ type objectStorageConfig struct {
 
 func main() {
 	var cfg config
+	// Set port to 8080 if not set
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 	cfg.port = port
+
+	// Set environment to development if not set
+	env := os.Getenv("GOENV")
+	if env == "" {
+		env = "development"
+	}
+	cfg.environment = env
+
 	flag.BoolVar(&cfg.objectStorage.serveStaticObjectStorage, "object-storage", false, "Serve static files from object storage")
 
 	flag.Parse()
@@ -101,8 +119,14 @@ func main() {
 	cfg.db.name = os.Getenv("DBNAME")
 	cfg.db.user = os.Getenv("DBUSER")
 	cfg.db.password = os.Getenv("DBPASSWORD")
-	cfg.db.setDSN()
-	db, err := gorm.Open(postgres.Open(cfg.db.dsn), &gorm.Config{})
+
+	if cfg.environment == "development" {
+		cfg.db.setDevDSN()
+	} else {
+		cfg.db.setDSN()
+	}
+
+	db, err := gorm.Open(postgres.Open(cfg.db.getDSN()), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}

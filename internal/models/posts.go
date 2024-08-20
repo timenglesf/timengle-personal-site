@@ -2,32 +2,31 @@ package models
 
 import (
 	"errors"
+	"time"
 
 	"gorm.io/gorm"
 )
 
 type Post struct {
 	gorm.Model
-	Title      string     `gorm:"not null:unique"`
-	Content    string     `gorm:"not null"`
-	AuthorID   string     `gorm:"not null"`
-	Author     User       `gorm:"foreignKey:AuthorID"`
-	Tags       []Tag      `gorm:"many2many:post_tags"`
-	Categories []Category `gorm:"many2many:post_categories"`
-	Private    bool       `gorm:"not null;default:false"`
+	Title       string `gorm:"not null:unique"`
+	Date        time.Time
+	Description string
+	Markdown    string
+	Content     string     `gorm:"not null"`
+	AuthorID    string     `gorm:"not null"`
+	Author      User       `gorm:"foreignKey:AuthorID"`
+	Tags        []Tag      `gorm:"many2many:post_tags"`
+	Categories  []Category `gorm:"many2many:post_categories"`
+	Private     bool       `gorm:"not null;default:false"`
+	HeaderImage string
 }
 
 type PostModel struct {
 	DB *gorm.DB
 }
 
-func (m *PostModel) Insert(title, content string, private bool, authorID string) (uint, error) {
-	p := Post{
-		Title:    title,
-		Content:  content,
-		Private:  private,
-		AuthorID: authorID,
-	}
+func (m *PostModel) Insert(p Post) (uint, error) {
 	result := m.DB.Create(&p)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrDuplicatedKey) {

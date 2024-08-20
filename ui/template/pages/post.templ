@@ -10,13 +10,13 @@ func ShouldShowUpdatedAt(createdAt, updatedAt time.Time) bool {
 }
 
 templ Post(d *shared.TemplateData) {
-	<div class="flex flex-col max-w-[90%] mb-4">
+	<div class="flex flex-col mb-14 max-w-[90%]">
 		<h1 class="text-4xl mb-2">{ d.BlogPost.Title }</h1>
 		if d.Flash.Type != "" {
 			@DisplayFlashAlert(d)
 		}
-		<p class="date">{ d.BlogPost.CreatedAt.Weekday().String() } { shared.HumanDate( d.BlogPost.CreatedAt) }</p>
-		if ShouldShowUpdatedAt(d.BlogPost.CreatedAt, d.BlogPost.UpdatedAt) {
+		<p class="date">{ d.BlogPost.Date.Weekday().String() } { shared.HumanDate( d.BlogPost.Date) }</p>
+		if ShouldShowUpdatedAt(d.BlogPost.Date, d.BlogPost.UpdatedAt) {
 			<p class="date">Last updated: { d.BlogPost.UpdatedAt.Weekday().String() } { shared.HumanDate( d.BlogPost.UpdatedAt) }</p>
 		}
 	</div>
