@@ -28,20 +28,20 @@ func Base(title string, page templ.Component, data *shared.TemplateData) templ.C
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html data-theme=\"mytheme mytheme \"><head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\" data-theme=\"mytheme mytheme\"><head><!-- Metadata --><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><meta name=\"theme-color\" content=\"#a9a5bf\"><meta name=\"description\" content=\"Tim Engle&#39;s Blog\"><meta name=\"keywords\" content=\"go, webdev, blog, software, engineering, blog\"><meta name=\"author\" content=\"Tim Engle\"><title>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/template/base.templ`, Line: 12, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/template/base.templ`, Line: 19, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><link rel=\"stylesheet\" href=\"/static/dist/style/styles.css\"><script defer src=\"/static/dist/js/form-prevent.js\"></script><script defer src=\"/static/dist/js/app.js\"></script><script defer src=\"/static/dist/js/htmx.min.js\"></script></head><body class=\"flex flex-col min-h-screen bg-base-100 text-base-content\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><!-- Stylesheets --><link rel=\"stylesheet\" href=\"/static/dist/style/styles.css\"><!-- Fonts --><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap\" rel=\"stylesheet\"><!-- Scripts --><script defer src=\"/static/dist/js/form-prevent.js\"></script><script defer src=\"/static/dist/js/app.js\"></script><script defer src=\"/static/dist/js/htmx.min.js\"></script></head><body class=\"flex flex-col min-h-screen bg-base-100 text-base-content\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

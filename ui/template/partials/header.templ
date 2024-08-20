@@ -7,7 +7,7 @@ import (
 )
 
 templ navLink(hrefStr templ.SafeURL, text string) {
-	<a href={ hrefStr } class="text-xl text-base-content hover:text-info duration-300">{ text }</a>
+	<li><a href={ hrefStr } class="text-xl text-base-content hover:text-info duration-300">{ text }</a></li>
 }
 
 templ logoutLink(d *shared.TemplateData) {
