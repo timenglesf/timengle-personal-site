@@ -169,6 +169,7 @@ func (app *application) buildNewPost(form shared.BlogPostFormData, matter matter
 		Content:     content,
 		AuthorID:    userId,
 		Private:     matter.Private,
+		HeaderImage: matter.HeaderImage,
 	}
 }
 
