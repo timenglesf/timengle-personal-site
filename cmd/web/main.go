@@ -15,7 +15,6 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/timenglesf/personal-site/internal/models"
 	"github.com/timenglesf/personal-site/ui/template"
 )
@@ -44,9 +43,9 @@ type application struct {
 
 type config struct {
 	port          string
+	environment   string
 	db            psqlConfig
 	objectStorage objectStorageConfig
-	environment   string
 }
 
 type psqlConfig struct {
