@@ -23,7 +23,7 @@ templ PostBase(title string, page templ.Component, data *shared.TemplateData) {
 				<meta property="og:description" content={ data.BlogPost.Description }/>
 			}
 			if data.BlogPost.HeaderImage != "" {
-				<meta property="og:image" content="/static/dist/img/icon_sm.png"/>
+				<meta property="og:image" content={ data.BlogPost.HeaderImage }/>
 			}
 			<meta name="theme-color" content="#a9a5bf"/>
 			<!-- Stylesheets -->
