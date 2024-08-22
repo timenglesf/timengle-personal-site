@@ -46,7 +46,8 @@ module.exports = {
     'fill-base-100',
     'fill-base-100-focus',
     'fill-secondary',
-    'fill-secondary-focus'
+    'fill-secondary-focus',
+    'max-w-5xl'
   ],
   daisyui: {
     themes: [
