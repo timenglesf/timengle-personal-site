@@ -16,9 +16,9 @@ templ Post(d *shared.TemplateData) {
 			@DisplayFlashAlert(d)
 		}
 		<p class="date">{ d.BlogPost.Date.Weekday().String() } { shared.HumanDate( d.BlogPost.Date) }</p>
-		if ShouldShowUpdatedAt(d.BlogPost.Date, d.BlogPost.UpdatedAt) {
-			<p class="date">Last updated: { d.BlogPost.UpdatedAt.Weekday().String() } { shared.HumanDate( d.BlogPost.UpdatedAt) }</p>
-		}
+		//	if ShouldShowUpdatedAt(d.BlogPost.Date, d.BlogPost.UpdatedAt) {
+		//		<p class="date">Last updated: { d.BlogPost.UpdatedAt.Weekday().String() } { shared.HumanDate( d.BlogPost.UpdatedAt) }</p>
+		//	}
 	</div>
 	<article
 		class="

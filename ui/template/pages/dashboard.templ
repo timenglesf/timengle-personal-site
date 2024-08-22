@@ -10,7 +10,7 @@ import (
 
 templ DashboardBlogPostRow(b *models.Post) {
 	<tr>
-		<td><a href={ templ.SafeURL("/posts/view/" + url.QueryEscape(b.Title)) }></a>{ b.Title }</td>
+		<td class="max-w-[12rem] whitespace-normal"><a class="font-semibold underline" href={ templ.SafeURL("/posts/view/" + url.QueryEscape(b.Title)) }>{ b.Title }</a></td>
 		<td>{ shared.HumanDate( b.CreatedAt) }</td>
 		<td>
 			<label>
@@ -21,9 +21,9 @@ templ DashboardBlogPostRow(b *models.Post) {
 				}
 			</label>
 		</td>
-		<td>
+		<td class="flex gap-2">
 			<button hx-get={ "/posts/edit/" + strconv.Itoa(int(b.ID)) } hx-target="main" hx-trigger="click" hx-swap="innerHTML" type="button" class="btn btn-accent text-primary-content">Edit</button>
-			<a href={ templ.SafeURL("/posts/view/" + url.QueryEscape(b.Title)) }><button type="button" class="btn btn-secondary text-primary-content">View</button></a>
+			// <a href={ templ.SafeURL("/posts/view/" + url.QueryEscape(b.Title)) }><button type="button" class="btn btn-secondary text-primary-content">View</button></a>
 		</td>
 	</tr>
 }

@@ -18,7 +18,13 @@ func (app *application) routes() http.Handler {
 		fileSvr = &fileserver.EmbeddedFileServer{FS: http.FS(ui.Files)}
 	}
 
-	mux.Handle("/static/", app.staticCacheHeaders(fileSvr))
+	if app.cfg.environment == "development" {
+		mux.Handle("/static/", fileSvr)
+	}
+
+	if app.cfg.environment == "production" {
+		mux.Handle("/static/", app.staticCacheHeaders(fileSvr))
+	}
 
 	dynamic := alice.New(app.sessionManager.LoadAndSave, app.noSurf)
 	mux.Handle("GET /{$}", dynamic.ThenFunc(app.home))
@@ -27,6 +33,7 @@ func (app *application) routes() http.Handler {
 	// Posts
 	mux.Handle("GET /posts/view/{slug}", dynamic.ThenFunc(app.handleGetBlogPost))
 	mux.Handle("GET /posts/latest", dynamic.ThenFunc(app.handleGetLatestBlogPosts))
+	mux.Handle("GET /posts/content", dynamic.ThenFunc(app.handleGetBlogModal))
 
 	adminProtected := dynamic.Append(app.requireAdmin)
 	// Protected Post routes

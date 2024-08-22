@@ -130,7 +130,7 @@ func CreatePost(data *shared.TemplateData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></div><div class=\"mt-4\"><button class=\"btn btn-primary\" type=\"submit\">Create Post</button> <button class=\"btn btn-accent text-primary-content\" type=\"button\">Preview</button></div></form></div></main>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></div><div class=\"mt-4\"><button class=\"btn btn-primary\" type=\"submit\">Create Post</button> <button hx-get=\"/posts/content\" hx-target=\".modal-box\" hx-swap=\"innerHTML\" hx-include=\"textarea[name=&#39;content&#39;]\" class=\"btn btn-accent text-primary-content\" onclick=\"my_modal_1.showModal()\" type=\"button\">Preview</button></div></form></div></main><dialog id=\"my_modal_1\" class=\"modal\"><div class=\"modal-box font-poppins w-full max-w-5xl\"></div><form method=\"dialog\" class=\"modal-backdrop\"><button>close</button></form></dialog>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
