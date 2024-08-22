@@ -97,7 +97,7 @@ func (app *application) requireAdmin(next http.Handler) http.Handler {
 func (app *application) staticCacheHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if strings.HasPrefix(r.URL.Path, "/static/") {
-			w.Header().Add("Cache-Control", "public, max-age=100000")
+			w.Header().Add("Cache-Control", "public, max-age=1800")
 		}
 		next.ServeHTTP(w, r)
 	})

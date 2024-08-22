@@ -18,14 +18,13 @@ func (app *application) routes() http.Handler {
 		fileSvr = &fileserver.EmbeddedFileServer{FS: http.FS(ui.Files)}
 	}
 
-	//if app.cfg.environment == "development" {
-	//	mux.Handle("/static/", fileSvr)
-	//}
+	if app.cfg.environment == "development" {
+		mux.Handle("/static/", fileSvr)
+	}
 
-	//if app.cfg.environment == "production" {
-	//	mux.Handle("/static/", app.staticCacheHeaders(fileSvr))
-	//}
-	mux.Handle("/static/", fileSvr)
+	if app.cfg.environment == "production" {
+		mux.Handle("/static/", app.staticCacheHeaders(fileSvr))
+	}
 
 	dynamic := alice.New(app.sessionManager.LoadAndSave, app.noSurf)
 	mux.Handle("GET /{$}", dynamic.ThenFunc(app.home))
