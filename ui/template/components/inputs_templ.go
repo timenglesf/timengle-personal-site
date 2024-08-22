@@ -265,7 +265,7 @@ func TextAreaInputDisplay(val string) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(val)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/template/components/inputs.templ`, Line: 66, Col: 82}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/template/components/inputs.templ`, Line: 65, Col: 82}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
