@@ -65,23 +65,14 @@ func (app *application) handleGetBlogPost(w http.ResponseWriter, r *http.Request
 	data := app.newTemplateData(r)
 	data.BlogPost = post
 
-	// convert markdown to html
-	mdRenderer := goldmark.New(
-		goldmark.WithExtensions(
-			highlighting.NewHighlighting(
-				highlighting.WithStyle("dracula"),
-			),
-		),
-	)
-
-	var buf bytes.Buffer
-	if err := mdRenderer.Convert([]byte(data.BlogPost.Content), &buf); err != nil {
+	contentHTML, err := convertMarkdownContentToHTML(post.Content)
+	if err != nil {
 		app.logger.Error("Error converting markdown to html", "error", err)
 		app.serverError(w, r, err)
 		return
 	}
 
-	data.BlogPost.Content = buf.String()
+	data.BlogPost.Content = contentHTML
 
 	// Get flash message from session
 	flashSuccess := app.sessionManager.PopString(r.Context(), "flashSuccess")
@@ -186,4 +177,50 @@ func (app *application) handleDisplayEditPostForm(w http.ResponseWriter, r *http
 	if err = page.Render(r.Context(), w); err != nil {
 		app.serverError(w, r, err)
 	}
+}
+
+func (app *application) handleGetBlogModal(w http.ResponseWriter, r *http.Request) {
+	vals := r.URL.Query()
+	c := vals.Get("content")
+
+	matter, contentByte, err := app.extractFrontmatter(c)
+	if err != nil {
+		app.logger.Error("Error extracting front matter", "error", err)
+		fmt.Fprintf(w, "There was an error previewing your content")
+	}
+
+	header := `<h1 class="font-poppins text-3xl">` + matter.Title + `</h1>`
+	contentHTML, err := convertMarkdownContentToHTML(string(contentByte))
+	if err != nil {
+		app.logger.Error("Error converting markdown to html", "error", err)
+		fmt.Fprintf(w, "There was an error previewing your content")
+	}
+
+	proseWrapper := `<div class="
+			prose 
+      prose-sm
+      prose-code:font-sans
+      prose-pre:font-sans
+      prose-headings:font-sans
+      hover:prose-a:text-info
+      prose-a:duration-300
+      lg:prose-lg
+">` + contentHTML + `</div>`
+
+	fmt.Fprintf(w, "%s", header+proseWrapper)
+}
+
+func convertMarkdownContentToHTML(content string) (string, error) {
+	mdRenderer := goldmark.New(
+		goldmark.WithExtensions(
+			highlighting.NewHighlighting(
+				highlighting.WithStyle("dracula"),
+			),
+		),
+	)
+	var buf bytes.Buffer
+	if err := mdRenderer.Convert([]byte(content), &buf); err != nil {
+		return "", err
+	}
+	return buf.String(), nil
 }

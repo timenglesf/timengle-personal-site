@@ -27,6 +27,7 @@ func (app *application) routes() http.Handler {
 	// Posts
 	mux.Handle("GET /posts/view/{slug}", dynamic.ThenFunc(app.handleGetBlogPost))
 	mux.Handle("GET /posts/latest", dynamic.ThenFunc(app.handleGetLatestBlogPosts))
+	mux.Handle("GET /posts/content", dynamic.ThenFunc(app.handleGetBlogModal))
 
 	adminProtected := dynamic.Append(app.requireAdmin)
 	// Protected Post routes
