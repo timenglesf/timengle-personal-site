@@ -22,15 +22,16 @@ type FlashMessage struct {
 
 type TemplateData struct {
 	BlogPosts            []models.Post
-	CSRFToken            string
-	BaseURL              string
 	User                 models.User
 	BlogForm             BlogPostFormData
 	SignUpForm           AdminSignUpForm
 	LoginForm            AdminLoginForm
-	Flash                *FlashMessage
 	BlogPost             *models.Post
 	MostRecentPublicPost *models.Post
+	Flash                *FlashMessage
+	CSRFToken            string
+	BaseURL              string
+	URLPath              string
 	CurrentYear          int
 	TotalPostCount       int
 	CurrentPage          int
