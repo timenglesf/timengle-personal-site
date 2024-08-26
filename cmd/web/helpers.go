@@ -34,6 +34,7 @@ func (app *application) newTemplateData(r *http.Request) shared.TemplateData {
 		CurrentYear:          time.Now().Year(),
 		CSRFToken:            nosurf.Token(r),
 		BaseURL:              app.getBaseURLString(r),
+		URLPath:              r.URL.Path,
 		Flash:                &shared.FlashMessage{},
 		MostRecentPublicPost: app.mostRecentPost,
 		BlogPosts:            *app.latestPublicPosts,
