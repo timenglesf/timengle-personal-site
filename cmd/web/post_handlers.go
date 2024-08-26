@@ -13,6 +13,7 @@ import (
 	"github.com/timenglesf/personal-site/internal/shared"
 	"github.com/yuin/goldmark"
 
+	figure "github.com/mangoumbrella/goldmark-figure"
 	highlighting "github.com/yuin/goldmark-highlighting/v2"
 )
 
@@ -213,6 +214,7 @@ func (app *application) handleGetBlogModal(w http.ResponseWriter, r *http.Reques
 func convertMarkdownContentToHTML(content string) (string, error) {
 	mdRenderer := goldmark.New(
 		goldmark.WithExtensions(
+			figure.Figure,
 			highlighting.NewHighlighting(
 				highlighting.WithStyle("dracula"),
 			),
