@@ -14,4 +14,5 @@ COPY ./timengledev_blog ./timengledev_blog
 RUN chmod +x ./timengledev_blog
 
 # Specify the entrypoint to run the blog binary
-CMD ["./timengledev_blog -object-storage=true"]
+CMD ["./timengledev_blog", "-object-storage=true"]
+
