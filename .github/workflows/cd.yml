@@ -11,6 +11,8 @@ jobs:
       # Checkout the repository code
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       # Set up Go environment
       - name: Setup Go
@@ -49,7 +51,7 @@ jobs:
         run: |
           while IFS= read -r file; do
             new_path=$(echo "$file" | sed 's|^ui/||')
-            gcloud storage cp "$file" "gs://your-bucket-name/$new_path"
+            gcloud storage cp "$file" "gs://timengledev-blog/$new_path"
           done < changed_files.txt
 
       # Build and push the Docker image to Artifact Registry
