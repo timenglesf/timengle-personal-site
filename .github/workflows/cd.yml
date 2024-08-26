@@ -39,7 +39,7 @@ jobs:
       # Sync the static files with GCP
       - name: Sync static files with GCP
         run: |
-          gcloud storage rsync ui/static gs://timengledev-blog/static --recursive
+          gcloud storage rsync ui/static gs://timengledev-blog-bucket/static --recursive
 
       # Build and push the Docker image to Artifact Registry
       - name: Build & Push image to Artifact Registry
