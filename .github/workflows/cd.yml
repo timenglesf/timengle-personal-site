@@ -11,8 +11,6 @@ jobs:
       # Checkout the repository code
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       # Set up Go environment
       - name: Setup Go
@@ -38,21 +36,10 @@ jobs:
       - name: Use gcloud cli
         run: gcloud info
 
-      # Check if any files in ./ui/static/*/* were updated
-      - name: Detect changes in UI static files
-        id: changed_files
+      # Sync the static files with GCP
+      - name: Sync static files with GCP
         run: |
-          git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- ./ui/static/ > changed_files.txt
-          cat changed_files.txt
-
-      # Upload only the changed files to GCP
-      - name: Upload changed files to GCP
-        if: ${{ steps.changed_files.outputs.files != '' }}
-        run: |
-          while IFS= read -r file; do
-            new_path=$(echo "$file" | sed 's|^ui/||')
-            gcloud storage cp "$file" "gs://timengledev-blog/$new_path"
-          done < changed_files.txt
+          gcloud storage rsync -r -d ./ui/static gs://timengledev-blog/static
 
       # Build and push the Docker image to Artifact Registry
       - name: Build & Push image to Artifact Registry
