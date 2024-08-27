@@ -11,7 +11,6 @@ import (
 func (app *application) routes() http.Handler {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /ping", ping)
 	var fileSvr http.Handler
 	if app.cfg.objectStorage.serveStaticObjectStorage {
 		fileSvr = &fileserver.ObjectStorageFileServer{ObjectStorageURL: app.cfg.objectStorage.objectStorageURL}
@@ -28,6 +27,7 @@ func (app *application) routes() http.Handler {
 	}
 
 	dynamic := alice.New(app.sessionManager.LoadAndSave, app.noSurf)
+	mux.Handle("GET /ping", dynamic.ThenFunc(ping))
 	mux.Handle("GET /{$}", dynamic.ThenFunc(app.home))
 	mux.Handle("GET /about", dynamic.ThenFunc(app.about))
 

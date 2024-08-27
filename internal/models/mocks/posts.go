@@ -16,7 +16,7 @@ func getMockPost(id uint) models.Post {
 				ID:        1,
 				CreatedAt: time.Date(2024, 8, 26, 12, 0, 0, 0, time.UTC),
 			},
-			Title:       "Continuous Deployment: Automating GCP Deployments with Artifact Registry and Cloud Run",
+			Title:       "First Post",
 			Date:        time.Date(2024, 8, 26, 12, 0, 0, 0, time.UTC),
 			Description: "Wrap up creating a continuous deployment pipeline by integrating Google Cloud's Artifact Registry and Cloud Run.",
 			Markdown:    dummyPublicMarkdownText1,
@@ -46,7 +46,7 @@ func getMockPost(id uint) models.Post {
 				ID:        3,
 				CreatedAt: time.Date(2024, 8, 26, 12, 0, 0, 0, time.UTC),
 			},
-			Title:       "Continuous Deployment: Automating GCP Deployments with Artifact Registry and Cloud Run",
+			Title:       "Third Post",
 			Date:        time.Date(2024, 8, 26, 12, 0, 0, 0, time.UTC),
 			Description: "Wrap up creating a continuous deployment pipeline by integrating Google Cloud's Artifact Registry and Cloud Run.",
 			Markdown:    dummyPrivateMarkdownText1,
@@ -61,7 +61,7 @@ func getMockPost(id uint) models.Post {
 				ID:        4,
 				CreatedAt: time.Date(2024, 8, 27, 12, 0, 0, 0, time.UTC),
 			},
-			Title:       "Second Post",
+			Title:       "Fourth Post",
 			Date:        time.Date(2024, 8, 27, 12, 0, 0, 0, time.UTC),
 			Description: "Another post",
 			Markdown:    dummyPublicMarkdownText2,
@@ -88,7 +88,7 @@ func (m *PostModel) Get(id uint) (*models.Post, error) {
 }
 
 func (m *PostModel) GetPostByTitle(title string) (*models.Post, error) {
-	if title == "Continuous Deployment: Automating GCP Deployments with Artifact Registry and Cloud Run" {
+	if title == "First Post" {
 		post := getMockPost(1)
 		return &post, nil
 	}

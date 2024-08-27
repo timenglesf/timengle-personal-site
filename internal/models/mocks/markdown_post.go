@@ -1,7 +1,7 @@
 package mocks
 
 const dummyPublicMarkdownText1 = `+++ 
-title = "Continuous Deployment: Automating GCP Deployments with Artifact Registry and Cloud Run" 
+title = "First Post
 date = "2024-08-26" 
 description = "Wrap up creating a continuous deployment pipeline by integrating Google Cloud's Artifact Registry and Cloud Run." 
 private = false 

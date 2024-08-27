@@ -7,8 +7,12 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/http/httptest"
+	"os"
 	"testing"
+	"time"
 
+	"github.com/alexedwards/scs/v2"
+	"github.com/go-playground/form/v4"
 	"github.com/timenglesf/personal-site/internal/models/mocks"
 	"github.com/timenglesf/personal-site/ui/template"
 )
@@ -17,13 +21,26 @@ func newTestApplication(t *testing.T) *application {
 	cfg := &config{
 		environment: "test",
 	}
+	formDecoder := form.NewDecoder()
+
+	sessionManager := scs.New()
+	sessionManager.Lifetime = 12 * time.Hour
+	sessionManager.Cookie.Secure = true
+
+	post := &mocks.PostModel{}
+	latestPublicPosts, _ := post.LatestPosts(false)
 	return &application{
-		logger:           slog.New(slog.NewTextHandler(io.Discard, nil)),
-		cfg:              cfg,
-		user:             &mocks.UserModel{},
-		post:             &mocks.PostModel{},
-		pageTemplates:    template.CreatePageTemplates(),
-		partialTemplates: template.CreatePartialTemplates(),
+		// logger:           slog.New(slog.NewTextHandler(io.Discard, nil)),
+		logger:            slog.New(slog.NewTextHandler(os.Stdout, nil)),
+		cfg:               cfg,
+		user:              &mocks.UserModel{},
+		post:              &mocks.PostModel{},
+		pageTemplates:     template.CreatePageTemplates(),
+		partialTemplates:  template.CreatePartialTemplates(),
+		formDecoder:       formDecoder,
+		sessionManager:    sessionManager,
+		latestPublicPosts: &latestPublicPosts,
+		mostRecentPost:    &latestPublicPosts[1],
 	}
 }
 
