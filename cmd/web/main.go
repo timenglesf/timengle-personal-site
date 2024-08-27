@@ -30,8 +30,8 @@ type application struct {
 	logger            *slog.Logger
 	cfg               *config
 	meta              *models.MetaModel
-	user              *models.UserModel
-	post              *models.PostModel
+	user              models.UserModelInterface
+	post              models.PostModelInterface
 	db                *gorm.DB
 	sessionManager    *scs.SessionManager
 	formDecoder       *form.Decoder

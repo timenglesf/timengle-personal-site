@@ -25,6 +25,13 @@ type UserModel struct {
 	DB *gorm.DB
 }
 
+type UserModelInterface interface {
+	GetAdmin() (*User, error)
+	Insert(username, email, password string, isAdmin bool) (string, error)
+	GetByEmail(email string) (*User, error)
+	Authenticate(email, password string, checkAdmin bool) (*User, error)
+}
+
 func (m *UserModel) GetAdmin() (*User, error) {
 	var user User
 	// Get single user with is_admin = true

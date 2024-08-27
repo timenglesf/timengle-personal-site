@@ -8,6 +8,9 @@ import (
 	"net/http/cookiejar"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/timenglesf/personal-site/internal/models/mocks"
+	"github.com/timenglesf/personal-site/ui/template"
 )
 
 func newTestApplication(t *testing.T) *application {
@@ -15,8 +18,12 @@ func newTestApplication(t *testing.T) *application {
 		environment: "test",
 	}
 	return &application{
-		logger: slog.New(slog.NewTextHandler(io.Discard, nil)),
-		cfg:    cfg,
+		logger:           slog.New(slog.NewTextHandler(io.Discard, nil)),
+		cfg:              cfg,
+		user:             &mocks.UserModel{},
+		post:             &mocks.PostModel{},
+		pageTemplates:    template.CreatePageTemplates(),
+		partialTemplates: template.CreatePartialTemplates(),
 	}
 }
 
