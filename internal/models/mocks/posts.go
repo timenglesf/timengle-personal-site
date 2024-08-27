@@ -64,7 +64,7 @@ func getMockPost(id uint) models.Post {
 			Title:       "Fourth Post",
 			Date:        time.Date(2024, 8, 27, 12, 0, 0, 0, time.UTC),
 			Description: "Another post",
-			Markdown:    dummyPublicMarkdownText2,
+			Markdown:    dummyPrivateMarkdownText2,
 			Content:     dummyContentText2,
 			AuthorID:    "1",
 			Private:     true,

@@ -13,7 +13,3 @@ func (app *application) about(w http.ResponseWriter, r *http.Request) {
 	data := app.newTemplateData(r)
 	app.renderPage(w, r, app.pageTemplates.About, "Tim Engle - About Me", &data)
 }
-
-func ping(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("OK"))
-}
