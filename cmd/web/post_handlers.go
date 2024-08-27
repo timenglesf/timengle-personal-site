@@ -34,6 +34,7 @@ func (app *application) handleGetBlogPost(w http.ResponseWriter, r *http.Request
 	titleId := r.PathValue("slug")
 	targetPostTitle, err := url.QueryUnescape(titleId)
 	if err != nil {
+		fmt.Println(err)
 		app.clientError(w, http.StatusBadRequest)
 	}
 

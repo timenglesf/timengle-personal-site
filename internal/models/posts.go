@@ -22,6 +22,18 @@ type Post struct {
 	HeaderImage string
 }
 
+type PostModelInterface interface {
+	Insert(p Post) (uint, error)
+	Get(id uint) (*Post, error)
+	GetPostByTitle(title string) (*Post, error)
+	LatestPosts(includePrivatePosts bool) ([]Post, error)
+	MostRecentPost(includePrivatePosts bool) (*Post, error)
+	GetPosts(includePrivatePosts bool, page int, pageSize int) ([]Post, error)
+	Update(p *Post) error
+	Count(includePrivatePosts bool) (int64, error)
+	GetPostByID(id uint) (*Post, error)
+}
+
 type PostModel struct {
 	DB *gorm.DB
 }
