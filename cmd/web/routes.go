@@ -11,6 +11,7 @@ import (
 func (app *application) routes() http.Handler {
 	mux := http.NewServeMux()
 
+	mux.HandleFunc("GET /ping", ping)
 	var fileSvr http.Handler
 	if app.cfg.objectStorage.serveStaticObjectStorage {
 		fileSvr = &fileserver.ObjectStorageFileServer{ObjectStorageURL: app.cfg.objectStorage.objectStorageURL}
