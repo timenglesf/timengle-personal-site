@@ -2,10 +2,18 @@
 package pages
 
 import (
+	"strconv"
+	"math"
 	"github.com/timenglesf/personal-site/internal/shared"
 	"github.com/timenglesf/personal-site/ui/template/components"
-	"strconv"
 )
+
+func convertIDToString(id uint) string {
+	if id > uint(math.MaxInt32) {
+		return "0"
+	}
+	return strconv.Itoa(int(id))
+}
 
 templ EditPost(data *shared.TemplateData) {
 	<main class="container mx-auto h-[calc(100vh-144px)]">
@@ -22,7 +30,7 @@ templ EditPost(data *shared.TemplateData) {
 					@labelDisplay("Content:")
 					@components.TextAreaInputDisplay(data.BlogForm.Content)
 					<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
-					<input type="hidden" name="id" value={ strconv.Itoa(int(data.BlogPost.ID)) }/>
+					<input type="hidden" name="id" value={ convertIDToString(data.BlogPost.ID) }/>
 				</div>
 				<div class="mt-4">
 					<button class="btn btn-primary" type="submit">Update</button>

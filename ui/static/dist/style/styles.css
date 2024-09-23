@@ -4313,6 +4313,10 @@ html {
   margin-top: 1rem;
 }
 
+.mb-20 {
+  margin-bottom: 5rem;
+}
+
 .block {
   display: block;
 }
@@ -4417,6 +4421,14 @@ html {
   width: 100%;
 }
 
+.w-\[80\%\] {
+  width: 80%;
+}
+
+.min-w-\[37\.5rem\] {
+  min-width: 37.5rem;
+}
+
 .max-w-2xl {
   max-width: 42rem;
 }
@@ -4443,6 +4455,10 @@ html {
 
 .max-w-\[60\%\] {
   max-width: 60%;
+}
+
+.max-w-\[56\.25rem\] {
+  max-width: 56.25rem;
 }
 
 .shrink-0 {

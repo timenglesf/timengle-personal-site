@@ -10,7 +10,7 @@ func ShouldShowUpdatedAt(createdAt, updatedAt time.Time) bool {
 }
 
 templ Post(d *shared.TemplateData) {
-	<div class="flex flex-col mb-14 max-w-[90%]">
+	<div class="flex flex-col mx-auto mb-14 max-w-[80%]">
 		<h1 class="text-4xl mb-2">{ d.BlogPost.Title }</h1>
 		if d.Flash.Type != "" {
 			@DisplayFlashAlert(d)
@@ -23,7 +23,10 @@ templ Post(d *shared.TemplateData) {
 	<article
 		class="
     mx-auto 
-    max-w-[60%]
+    mb-20
+    w-[80%] 
+    max-w-[56.25rem]
+    min-w-[37.5rem]
     prose 
     prose-sm
     prose-code:font-sans

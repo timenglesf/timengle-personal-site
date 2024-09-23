@@ -22,7 +22,7 @@ templ DashboardBlogPostRow(b *models.Post) {
 			</label>
 		</td>
 		<td class="flex gap-2">
-			<button hx-get={ "/posts/edit/" + strconv.Itoa(int(b.ID)) } hx-target="main" hx-trigger="click" hx-swap="innerHTML" type="button" class="btn btn-accent text-primary-content">Edit</button>
+			<button hx-get={ "/posts/edit/" + convertIDToString(b.ID) } hx-target="main" hx-trigger="click" hx-swap="innerHTML" type="button" class="btn btn-accent text-primary-content">Edit</button>
 			// <a href={ templ.SafeURL("/posts/view/" + url.QueryEscape(b.Title)) }><button type="button" class="btn btn-secondary text-primary-content">View</button></a>
 		</td>
 	</tr>
