@@ -161,6 +161,11 @@ func (app *application) handleDisplayEditPostForm(w http.ResponseWriter, r *http
 		return
 	}
 
+	if id < 0 {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
 	post, err := app.post.GetPostByID(uint(id))
 	if err != nil {
 		app.serverError(w, r, err)

@@ -3,6 +3,7 @@ package template
 import (
 	"github.com/timenglesf/personal-site/ui/template/partials"
 	"github.com/timenglesf/personal-site/internal/shared"
+	"github.com/timenglesf/personal-site/ui/template/components"
 	"strings"
 )
 
@@ -28,7 +29,9 @@ templ Base(title string, page templ.Component, data *shared.TemplateData) {
 			if strings.HasPrefix(data.URLPath, "/admin") {
 				<script defer src="/static/dist/js/form-prevent.js"></script>
 			}
-			<script defer src="/static/dist/js/htmx.min.js"></script>
+			if  data.IsAuthenticated {
+				<script defer src="/static/dist/js/htmx.min.js"></script>
+			}
 			// <script defer src="https://cdn.jsdelivr.net/npm/theme-change@2.0.2/index.js"></script>
 		</head>
 		<body class="flex flex-col min-h-screen bg-base-100 text-base-content">
@@ -37,6 +40,9 @@ templ Base(title string, page templ.Component, data *shared.TemplateData) {
 			<main class="flex-grow">
 				@page
 			</main>
+			<div class="mb-6">
+				@components.SocialLinks()
+			</div>
 			@partials.PageFooter(data)
 		</body>
 	</html>

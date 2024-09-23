@@ -1,9 +1,7 @@
 package partials
 
 import (
-	"fmt"
 	"github.com/timenglesf/personal-site/internal/shared"
-	"net/url"
 )
 
 templ navLink(hrefStr templ.SafeURL, text string) {
@@ -24,53 +22,56 @@ templ PageHeader(d *shared.TemplateData) {
 				</div>
 			</a>
 			<!-- Mobile Menu Button -->
-			<div class="block md:hidden">
-				<!-- Mobile Dropdown Menu -->
-				<div class="navbar-end">
-					<div class="dropdown dropdown-left">
-						<div tabindex="0" role="button" class="btn btn-default btn-circle">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								class="h-5 w-5"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke="currentColor"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
-									d="M4 6h16M4 12h16M4 18h7"
-								></path>
-							</svg>
-						</div>
-						<ul
-							tabindex="0"
-							class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow border border-base-200"
-						>
-							@navLink("/", "Home")
-							@navLink(templ.SafeURL(fmt.Sprintf("/posts/view/%s", url.QueryEscape(d.MostRecentPublicPost.Title))), "Blog")
-							@navLink("/about", "About")
-							@navLink("#", "Contact")
-							if  d.IsAuthenticated {
-								@navLink("/admin", "Dashboard")
-							}
-						</ul>
-					</div>
-				</div>
-			</div>
+			//		<div class="block md:hidden">
+			//			<!-- Mobile Dropdown Menu -->
+			//			<div class="navbar-end">
+			//				<div class="dropdown dropdown-left">
+			//					<div tabindex="0" role="button" class="btn btn-default btn-circle">
+			//						<svg
+			//							xmlns="http://www.w3.org/2000/svg"
+			//							class="h-5 w-5"
+			//							fill="none"
+			//							viewBox="0 0 24 24"
+			//							stroke="currentColor"
+			//						>
+			//							<path
+			//								stroke-linecap="round"
+			//								stroke-linejoin="round"
+			//								stroke-width="2"
+			//								d="M4 6h16M4 12h16M4 18h7"
+			//							></path>
+			//						</svg>
+			//					</div>
+			//					<ul
+			//						tabindex="0"
+			//						class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow border border-base-200"
+			//					>
+			//						@navLink("/", "Home")
+			//						@navLink(templ.SafeURL(fmt.Sprintf("/posts/view/%s", url.QueryEscape(d.MostRecentPublicPost.Title))), "Blog")
+			//						@navLink("/about", "About")
+			//						@navLink("#", "Contact")
+			//						if  d.IsAuthenticated {
+			//							@navLink("/admin", "Dashboard")
+			//						}
+			//					</ul>
+			//				</div>
+			//			</div>
+			//		</div>
+			if  d.IsAuthenticated {
+				@navLink("/admin", "Dashboard")
+			}
 			<!-- Navigation Links -->
-			<nav class="hidden md:flex navbar-end">
-				<ul class="flex space-x-4">
-					@navLink("/", "Home")
-					@navLink(templ.SafeURL(fmt.Sprintf("/posts/view/%s", url.QueryEscape(d.MostRecentPublicPost.Title))), "Blog")
-					@navLink("/about", "About")
-					@navLink("#", "Contact")
-					if  d.IsAuthenticated {
-						@navLink("/admin", "Dashboard")
-					}
-				</ul>
-			</nav>
+			//	<nav class="hidden md:flex navbar-end">
+			//		<ul class="flex space-x-4">
+			//			@navLink("/", "Home")
+			//			@navLink(templ.SafeURL(fmt.Sprintf("/posts/view/%s", url.QueryEscape(d.MostRecentPublicPost.Title))), "Blog")
+			//			@navLink("/about", "About")
+			//			@navLink("#", "Contact")
+			//			if  d.IsAuthenticated {
+			//				@navLink("/admin", "Dashboard")
+			//			}
+			//		</ul>
+			//	</nav>
 		</div>
 	</header>
 }
