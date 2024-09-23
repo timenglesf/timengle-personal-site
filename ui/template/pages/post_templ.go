@@ -81,7 +81,7 @@ func Post(d *shared.TemplateData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p></div><article class=\"\n    mx-auto \n    max-w-[80%]\n    prose \n    prose-sm\n    prose-code:font-sans\n    prose-pre:font-sans\n    prose-headings:font-sans\n    hover:prose-a:text-info\n    prose-a:duration-300\n    lg:prose-lg\n\n\t\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p></div><article class=\"\n    mx-auto \n    max-w-[60%]\n    prose \n    prose-sm\n    prose-code:font-sans\n    prose-pre:font-sans\n    prose-headings:font-sans\n    hover:prose-a:text-info\n    prose-a:duration-300\n    lg:prose-lg\n\n\t\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

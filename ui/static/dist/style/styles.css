@@ -4317,10 +4317,6 @@ html {
   display: block;
 }
 
-.inline-block {
-  display: inline-block;
-}
-
 .flex {
   display: flex;
 }
@@ -4417,10 +4413,6 @@ html {
   width: 15rem;
 }
 
-.w-\[2rem\] {
-  width: 2rem;
-}
-
 .w-full {
   width: 100%;
 }
@@ -4431,6 +4423,10 @@ html {
 
 .max-w-5xl {
   max-width: 64rem;
+}
+
+.max-w-\[12rem\] {
+  max-width: 12rem;
 }
 
 .max-w-\[80\%\] {
@@ -4445,16 +4441,8 @@ html {
   max-width: 640px;
 }
 
-.max-w-\[4rem\] {
-  max-width: 4rem;
-}
-
-.max-w-\[10rem\] {
-  max-width: 10rem;
-}
-
-.max-w-\[12rem\] {
-  max-width: 12rem;
+.max-w-\[60\%\] {
+  max-width: 60%;
 }
 
 .shrink-0 {
@@ -4503,10 +4491,6 @@ html {
 
 .gap-4 {
   gap: 1rem;
-}
-
-.gap-1 {
-  gap: 0.25rem;
 }
 
 .space-x-4 > :not([hidden]) ~ :not([hidden]) {

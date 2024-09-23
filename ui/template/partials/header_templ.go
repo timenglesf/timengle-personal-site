@@ -11,9 +11,7 @@ import "io"
 import "bytes"
 
 import (
-	"fmt"
 	"github.com/timenglesf/personal-site/internal/shared"
-	"net/url"
 )
 
 func navLink(hrefStr templ.SafeURL, text string) templ.Component {
@@ -45,7 +43,7 @@ func navLink(hrefStr templ.SafeURL, text string) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(text)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/template/partials/header.templ`, Line: 10, Col: 94}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/template/partials/header.templ`, Line: 8, Col: 94}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -99,23 +97,7 @@ func PageHeader(d *shared.TemplateData) templ.Component {
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<header class=\"bg-base-100 p-4\"><div class=\"flex navbar container justify-between mx-auto items-center\"><a href=\"https://timengle.dev\" class=\"block cursor-pointer w-full hover:text-info duration-300\"><div class=\"navbar-start flex items-center\"><img class=\"h-24 w-24 lg:mr-4 rounded-lg object-contain \" src=\"/static/dist/img/icon.webp\" alt=\"Logo\"><div class=\"text-2xl md:text-3xl font-bold \">timengle.dev</div></div></a><!-- Mobile Menu Button --><div class=\"block md:hidden\"><!-- Mobile Dropdown Menu --><div class=\"navbar-end\"><div class=\"dropdown dropdown-left\"><div tabindex=\"0\" role=\"button\" class=\"btn btn-default btn-circle\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-5 w-5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 6h16M4 12h16M4 18h7\"></path></svg></div><ul tabindex=\"0\" class=\"menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow border border-base-200\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = navLink("/", "Home").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = navLink(templ.SafeURL(fmt.Sprintf("/posts/view/%s", url.QueryEscape(d.MostRecentPublicPost.Title))), "Blog").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = navLink("/about", "About").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = navLink("#", "Contact").Render(ctx, templ_7745c5c3_Buffer)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<header class=\"bg-base-100 p-4\"><div class=\"flex navbar container justify-between mx-auto items-center\"><a href=\"https://timengle.dev\" class=\"block cursor-pointer w-full hover:text-info duration-300\"><div class=\"navbar-start flex items-center\"><img class=\"h-24 w-24 lg:mr-4 rounded-lg object-contain \" src=\"/static/dist/img/icon.webp\" alt=\"Logo\"><div class=\"text-2xl md:text-3xl font-bold \">timengle.dev</div></div></a><!-- Mobile Menu Button -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -125,33 +107,7 @@ func PageHeader(d *shared.TemplateData) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul></div></div></div><!-- Navigation Links --><nav class=\"hidden md:flex navbar-end\"><ul class=\"flex space-x-4\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = navLink("/", "Home").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = navLink(templ.SafeURL(fmt.Sprintf("/posts/view/%s", url.QueryEscape(d.MostRecentPublicPost.Title))), "Blog").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = navLink("/about", "About").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = navLink("#", "Contact").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if d.IsAuthenticated {
-			templ_7745c5c3_Err = navLink("/admin", "Dashboard").Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul></nav></div></header>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!-- Navigation Links --></div></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
