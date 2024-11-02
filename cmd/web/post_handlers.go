@@ -35,7 +35,7 @@ func (app *application) handleGetBlogPost(w http.ResponseWriter, r *http.Request
 	targetPostTitle, err := url.QueryUnescape(titleId)
 	if err != nil {
 		fmt.Println(err)
-		app.clientError(w, http.StatusBadRequest)
+		app.clientError(w, http.StatusBadRequest, "Error parsing title", err)
 	}
 
 	post, err := app.post.GetPostByTitle(targetPostTitle)
@@ -100,7 +100,7 @@ func (app *application) handleGetLatestBlogPosts(w http.ResponseWriter, r *http.
 func (app *application) handleBlogPostUpdate(w http.ResponseWriter, r *http.Request) {
 	sentCSRFTOKEN, err := r.Cookie("csrf_token")
 	if err != nil {
-		app.clientError(w, http.StatusBadRequest)
+		app.clientError(w, http.StatusBadRequest, "Error getting csrf token", err)
 		return
 	}
 
@@ -157,12 +157,12 @@ func (app *application) handleDisplayEditPostForm(w http.ResponseWriter, r *http
 	slug := r.PathValue("slug")
 	id, err := strconv.Atoi(slug)
 	if err != nil {
-		app.clientError(w, http.StatusBadRequest)
+		app.clientError(w, http.StatusBadRequest, "Error parsing slug", err)
 		return
 	}
 
 	if id < 0 {
-		app.clientError(w, http.StatusBadRequest)
+		app.clientError(w, http.StatusBadRequest, "Invalid id", err)
 		return
 	}
 
