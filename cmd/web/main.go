@@ -24,7 +24,7 @@ const (
 	sessionIsAdmin = "isAdmin"
 )
 
-var version = "0.0.0"
+var version = "1.0.2"
 
 type application struct {
 	logger            *slog.Logger
@@ -46,9 +46,11 @@ type config struct {
 	environment   string
 	db            psqlConfig
 	objectStorage objectStorageConfig
+	secureCookies bool
 }
 
 type psqlConfig struct {
+	local    bool
 	host     string
 	port     string
 	user     string
@@ -58,10 +60,17 @@ type psqlConfig struct {
 }
 
 func (c *psqlConfig) setDSN() {
-	c.dsn = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", c.host, c.port, c.user, c.password, c.name)
+	c.dsn = fmt.Sprintf(
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		c.host,
+		c.port,
+		c.user,
+		c.password,
+		c.name,
+	)
 }
 
-func (c *psqlConfig) setDevDSN() {
+func (c *psqlConfig) setLocalDSN() {
 	c.dsn = fmt.Sprintf("host=%s port=%s dbname=%s sslmode=disable", c.host, c.port, c.name)
 }
 
@@ -75,7 +84,11 @@ type objectStorageConfig struct {
 }
 
 func main() {
+	// Initialize logger
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+
 	var cfg config
+
 	// Set port to 8080 if not set
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -83,17 +96,21 @@ func main() {
 	}
 	cfg.port = port
 
-	// Set environment to development if not set
+	// Set environment to development if not set to production
 	env := os.Getenv("GOENV")
-	if env == "" {
+	if env != "production" {
+		logger.Info("setting environment to development")
 		env = "development"
+	} else {
+		logger.Info("setting environment to production")
 	}
 	cfg.environment = env
 
+	// Parse command-line flags
 	flag.BoolVar(&cfg.objectStorage.serveStaticObjectStorage, "object-storage", false, "Serve static files from object storage")
-
 	flag.Parse()
 
+	// Configure object storage if enabled
 	if cfg.objectStorage.serveStaticObjectStorage {
 		osURL := os.Getenv("OBJECT_STORAGE_URL")
 		if osURL == "" {
@@ -111,32 +128,47 @@ func main() {
 		cfg.objectStorage.objectStorageURL = osURL
 	}
 
-	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
-
+	// Configure database connection
+	cfg.db.local = os.Getenv("DBLOCAL") == "true"
 	cfg.db.host = os.Getenv("DBHOST")
 	cfg.db.port = os.Getenv("DBPORT")
 	cfg.db.name = os.Getenv("DBNAME")
 	cfg.db.user = os.Getenv("DBUSER")
 	cfg.db.password = os.Getenv("DBPASSWORD")
 
-	if cfg.environment == "development" {
-		cfg.db.setDevDSN()
+	if cfg.db.local {
+		cfg.db.setLocalDSN()
 	} else {
 		cfg.db.setDSN()
 	}
 
+	// Set secure cookies based on environment
+	if cfg.environment == "development" {
+		cfg.secureCookies = false
+	} else {
+		cfg.secureCookies = true
+	}
+
+	// Connect to the database
 	db, err := gorm.Open(postgres.Open(cfg.db.getDSN()), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}
 
+	// Auto-migrate database schema
 	err = db.AutoMigrate(&models.User{}, &models.Post{}, &models.Tag{}, &models.Meta{}, &models.Category{})
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	logger.Info("Successfully connected to the database", "dsn", cfg.db.dsn)
+	logger.Info(
+		"successfully connected to the database",
+		"name", cfg.db.name,
+		"host", cfg.db.host,
+		"port", cfg.db.port,
+	)
 
+	// Initialize session manager
 	sessionManager := scs.New()
 	sessionManager.Store, err = gormstore.New(db)
 	if err != nil {
@@ -147,11 +179,11 @@ func main() {
 	// Initialize form decoder
 	formDecoder := form.NewDecoder()
 
-	// Initialize page templates
+	// Initialize page and partial templates
 	pageTemplates := template.CreatePageTemplates()
-	// Initialize partial templates
 	partialTemplates := template.CreatePartialTemplates()
 
+	// Create application struct
 	app := &application{
 		logger:           logger,
 		cfg:              &cfg,
@@ -170,11 +202,12 @@ func main() {
 		app.logger.Error("Unable to update posts on app struct", "error", err)
 	}
 
+	// Insert meta information if necessary
 	meta := models.Meta{
 		Version:     version,
 		Name:        "personal-site",
-		LastUpdated: "2024-07-22",
-		Description: "A simple web application",
+		LastUpdated: "2024-11-02",
+		Description: "tim engle's blog",
 		Author:      "Tim Engle",
 		Environment: "Development",
 		BuildNumber: "1",
@@ -195,6 +228,7 @@ func main() {
 		}
 	}
 
+	// Configure and start the HTTP server
 	srv := &http.Server{
 		Addr:         ":" + cfg.port,
 		Handler:      app.routes(),
