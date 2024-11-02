@@ -17,6 +17,7 @@ func (app *application) handleDisplayAdminPage(w http.ResponseWriter, r *http.Re
 	_, err := app.user.GetAdmin()
 	if err != nil {
 		// Display the admin signup page
+		app.logger.Info("No admin user found in database", "error", err)
 		if errors.Is(err, models.ErrNoRecord) {
 			data := app.newTemplateData(r)
 			app.renderPage(w, r, app.pageTemplates.AdminSignup, "Admin Sign Up", &data)
@@ -37,6 +38,7 @@ func (app *application) handleDisplayAdminPage(w http.ResponseWriter, r *http.Re
 
 	recentPosts, err := app.post.GetPosts(true, 1, 10)
 	if err != nil {
+		app.logger.Error("Error getting recent posts", "error", err)
 		app.serverError(w, r, err)
 		return
 	}
@@ -63,7 +65,7 @@ func (app *application) handleAdminSignupPost(w http.ResponseWriter, r *http.Req
 
 	err := app.decodeForm(r, &form)
 	if err != nil {
-		app.clientError(w, http.StatusBadRequest)
+		app.clientError(w, http.StatusBadRequest, "Error decoding form", err)
 		return
 	}
 	form.Email = strings.TrimSpace(form.Email)
@@ -162,7 +164,7 @@ func (app *application) handleAdminLoginPost(w http.ResponseWriter, r *http.Requ
 
 	err := app.decodeForm(r, &form)
 	if err != nil {
-		app.clientError(w, http.StatusBadRequest)
+		app.clientError(w, http.StatusBadRequest, "Error decoding form", err)
 		return
 	}
 
@@ -224,7 +226,7 @@ func (app *application) handleAdminLoginPost(w http.ResponseWriter, r *http.Requ
 func (app *application) handleAdminLogoutPost(w http.ResponseWriter, r *http.Request) {
 	sentCSRFToken, err := r.Cookie("csrf_token")
 	if err != nil {
-		app.clientError(w, http.StatusForbidden)
+		app.clientError(w, http.StatusForbidden, "CSRF token not found", err)
 		return
 	}
 

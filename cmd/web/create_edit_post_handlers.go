@@ -28,7 +28,7 @@ func (app *application) handleCreateBlogPost(w http.ResponseWriter, r *http.Requ
 	// Parse form
 	form, err := app.parseBlogPostForm(r)
 	if err != nil {
-		app.clientError(w, http.StatusBadRequest)
+		app.clientError(w, http.StatusBadRequest, "Error parsing form", err)
 		return
 	}
 
@@ -75,7 +75,7 @@ func (app *application) handleBlogPostEdit(w http.ResponseWriter, r *http.Reques
 	}{}
 
 	if err := app.decodeForm(r, &form); err != nil {
-		app.clientError(w, http.StatusBadRequest)
+		app.clientError(w, http.StatusBadRequest, "Error parsing form", err)
 		return
 	}
 
