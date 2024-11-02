@@ -22,6 +22,18 @@ import (
 const (
 	sessionUserId  = "authenticatedUserID"
 	sessionIsAdmin = "isAdmin"
+	// DB env variable keys
+	DBLOCAL    = "DBLOCAL"
+	DBHOST     = "DBHOST"
+	DBPORT     = "DBPORT"
+	DBNAME     = "DBNAME"
+	DBUSER     = "DBUSER"
+	DBPASSWORD = "DBPASSWORD"
+	// Server Environment variable keys
+	HOSTPORT = "PORT"
+	GOENV    = "GOENV"
+	DEVENV   = "development"
+	PRODENV  = "production"
 )
 
 var version = "1.0.2"
@@ -90,17 +102,17 @@ func main() {
 	var cfg config
 
 	// Set port to 8080 if not set
-	port := os.Getenv("PORT")
+	port := os.Getenv(HOSTPORT)
 	if port == "" {
 		port = "8080"
 	}
 	cfg.port = port
 
 	// Set environment to development if not set to production
-	env := os.Getenv("GOENV")
-	if env != "production" {
+	env := os.Getenv(GOENV)
+	if env != PRODENV {
 		logger.Info("setting environment to development")
-		env = "development"
+		env = DEVENV
 	} else {
 		logger.Info("setting environment to production")
 	}
@@ -206,12 +218,12 @@ func (cfg *config) setObjectStorageURL() {
 // configDBConnection sets the database connection on the config struct
 // and initializes the DSN
 func (cfg *config) configDBConnection() {
-	cfg.db.local = os.Getenv("DBLOCAL") == "true"
-	cfg.db.host = os.Getenv("DBHOST")
-	cfg.db.port = os.Getenv("DBPORT")
-	cfg.db.name = os.Getenv("DBNAME")
-	cfg.db.user = os.Getenv("DBUSER")
-	cfg.db.password = os.Getenv("DBPASSWORD")
+	cfg.db.local = os.Getenv(DBLOCAL) == "true"
+	cfg.db.host = os.Getenv(DBHOST)
+	cfg.db.port = os.Getenv(DBPORT)
+	cfg.db.name = os.Getenv(DBNAME)
+	cfg.db.user = os.Getenv(DBUSER)
+	cfg.db.password = os.Getenv(DBPASSWORD)
 
 	if cfg.db.local {
 		cfg.db.setLocalDSN()
@@ -262,7 +274,7 @@ func (cfg *config) connectAndMigrateDB(logger *slog.Logger) (*gorm.DB, error) {
 
 // setEnviornmentDependentVariables sets the secureCookies configuration based on the environment.
 func (cfg *config) setEnviornmentDependentVariables() {
-	if cfg.environment == "development" {
+	if cfg.environment == DEVENV {
 		cfg.secureCookies = false
 	} else {
 		cfg.secureCookies = true
