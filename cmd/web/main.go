@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/alexedwards/scs/gormstore"
@@ -34,6 +35,8 @@ const (
 	GOENV    = "GOENV"
 	DEVENV   = "development"
 	PRODENV  = "production"
+
+	SHOULD_USE_OBJ_STORAGE_URL = "USE_OBJ_STORAGE"
 )
 
 var version = "1.0.2"
@@ -99,44 +102,43 @@ func main() {
 	// Initialize logger
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
+	//////////////////////////////////////////////
+	// Initialize Config and Set ENV Variables //
+	// //////////////////////////////////////////
 	var cfg config
-
-	// Set port to 8080 if not set
-	port := os.Getenv(HOSTPORT)
-	if port == "" {
-		port = "8080"
-	}
-	cfg.port = port
-
-	// Set environment to development if not set to production
-	env := os.Getenv(GOENV)
-	if env != PRODENV {
-		logger.Info("setting environment to development")
-		env = DEVENV
-	} else {
-		logger.Info("setting environment to production")
-	}
-	cfg.environment = env
-
+	portFlag := flag.String("port", "8080", "HTTP port")
+	envFlag := flag.String("env", "development", "Environment")
 	// Parse command-line flags
-	flag.BoolVar(
-		&cfg.objectStorage.serveStaticObjectStorage,
+	objStorageFlag := flag.Bool(
 		"object-storage",
 		false,
 		"Serve static files from object storage",
 	)
+
 	flag.Parse()
+
+	// Check if ENV variables exist, if so override the flag values
+	// set port variable
+	cfg.setHostPortEnv(*portFlag, logger)
+	// set development enviornment variable
+	cfg.setGoEnv(*envFlag, logger)
+	// set object storage flag
+	cfg.setUseObjStorage(*objStorageFlag, logger)
+
+	// Set secure cookies based on environment
+	cfg.setEnviornmentDependentVariables()
 
 	// Configure object storage if enabled
 	if cfg.objectStorage.serveStaticObjectStorage {
 		cfg.setObjectStorageURL()
 	}
 
+	/////////////////////////////////////
+	// Initialize Database and Session //
+	/////////////////////////////////////
+
 	// Configure database connection
 	cfg.configDBConnection()
-
-	// Set secure cookies based on environment
-	cfg.setEnviornmentDependentVariables()
 
 	// Connect and migrate database
 	db, err := cfg.connectAndMigrateDB(logger)
@@ -150,6 +152,10 @@ func main() {
 		logger.Error("unable to initialize session manager", "error", err)
 		panic("failed to initialize session manager")
 	}
+
+	/////////////////////////////////////
+	// Initialize Application Struct ///
+	////////////////////////////////////
 
 	// Initialize form decoder
 	formDecoder := form.NewDecoder()
@@ -196,6 +202,10 @@ func main() {
 	logger.Error("Server error", "error", err.Error())
 	os.Exit(1)
 }
+
+///////////////////////////////
+//// main function helpers ////
+///////////////////////////////
 
 // setObjectStorageURL sets the object storage URL on the config struct
 func (cfg *config) setObjectStorageURL() {
@@ -324,4 +334,49 @@ func (app *application) fetchOrInsertMetaData() *models.Meta {
 	}
 
 	return fetchedMeta
+}
+
+// ///////////////////////
+// ENV Variables Helpers//
+// ///////////////////////
+
+// getEnvOrDefault returns the value of the environment variable if it exists,
+// otherwise it returns the default value provided.
+func getEnvOrDefault(env, defaultValue string) string {
+	if v, exists := os.LookupEnv(env); exists && v != "" {
+		return v
+	}
+	return defaultValue
+}
+
+// setHostPortEnv sets the host port configuration value. It first checks for an
+// environment variable (HOSTPORT). If the environment variable is not set, it uses
+// the provided default value. It logs the final port value being set.
+func (cfg *config) setHostPortEnv(defaultVal string, logger *slog.Logger) {
+	v := getEnvOrDefault(HOSTPORT, defaultVal)
+	logger.Info(fmt.Sprintf("setting port to %s", v))
+	cfg.port = v
+}
+
+// setGoEnv sets the Go environment configuration value. It first checks for an
+// environment variable (GOENV). If the environment variable is not set, it uses
+// the provided default value. If the value is not "production" or "development",
+// it defaults to "development". It logs the final environment value being set.
+func (cfg *config) setGoEnv(defaultVal string, logger *slog.Logger) {
+	v := getEnvOrDefault(GOENV, defaultVal)
+	// if not production or development, set to development
+	if v != DEVENV && v != PRODENV {
+		cfg.environment = DEVENV
+	} else {
+		cfg.environment = v
+	}
+	logger.Info(fmt.Sprintf("setting environment to %s", v))
+}
+
+func (cfg *config) setUseObjStorage(defaultVal bool, logger *slog.Logger) {
+	if v, exists := os.LookupEnv(SHOULD_USE_OBJ_STORAGE_URL); exists {
+		cfg.objectStorage.serveStaticObjectStorage = strings.ToLower(v) == "true"
+	} else {
+		cfg.objectStorage.serveStaticObjectStorage = defaultVal
+	}
 }
