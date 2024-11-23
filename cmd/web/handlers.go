@@ -31,5 +31,6 @@ func (app *application) handleRSSFeed(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/rss+xml")
-	w.Write([]byte(rssFeed))
+	_, err = w.Write([]byte(rssFeed))
+	app.logger.Error("error writing rss feed writer", "error", err)
 }
