@@ -144,6 +144,7 @@ func main() {
 	// Connect and migrate database
 	db, err := cfg.connectAndMigrateDB(logger)
 	if err != nil {
+		logger.Error("failed to connect or migrate database", "error", err)
 		panic("failed to connect or migrate database")
 	}
 
