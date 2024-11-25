@@ -75,7 +75,7 @@ func (app *application) noSurf(next http.Handler) http.Handler {
 	csrfHandler.ExemptGlob("/posts/update/*")
 	csrfHandler.SetBaseCookie(http.Cookie{
 		HttpOnly: true,
-		Secure:   true,
+		Secure:   app.cfg.secureCookies,
 		Path:     "/",
 	})
 	return csrfHandler

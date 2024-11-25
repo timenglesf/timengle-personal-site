@@ -125,6 +125,10 @@ func (m *PostModel) GetPosts(includePrivatePosts bool, page int, pageSize int) (
 	return []models.Post{getMockPost(3), getMockPost(4)}, nil
 }
 
+func (m *PostModel) GetAllPosts(includePrivatePosts bool) ([]models.Post, error) {
+	return nil, nil
+}
+
 func (m *PostModel) Update(p *models.Post) error {
 	return nil
 }

@@ -3,29 +3,42 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
 	"log/slog"
 	"net/http"
 	"os"
 	"time"
 
-	"github.com/alexedwards/scs/gormstore"
 	"github.com/alexedwards/scs/v2"
 	"github.com/go-playground/form/v4"
-	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
 	"github.com/timenglesf/personal-site/internal/models"
 	"github.com/timenglesf/personal-site/ui/template"
 )
 
+// ENUMS
 const (
 	sessionUserId  = "authenticatedUserID"
 	sessionIsAdmin = "isAdmin"
+	// DB env variable keys
+	DBLOCAL    = "DBLOCAL"
+	DBHOST     = "DBHOST"
+	DBPORT     = "DBPORT"
+	DBNAME     = "DBNAME"
+	DBUSER     = "DBUSER"
+	DBPASSWORD = "DBPASSWORD"
+	// Server Environment variable keys
+	HOSTPORT = "PORT"
+	GOENV    = "GOENV"
+	DEVENV   = "development"
+	PRODENV  = "production"
+
+	SHOULD_USE_OBJ_STORAGE_URL = "USE_OBJ_STORAGE"
 )
 
-var version = "0.0.0"
+var version = "1.0.3"
 
+// application struct
 type application struct {
 	logger            *slog.Logger
 	cfg               *config
@@ -41,14 +54,23 @@ type application struct {
 	latestPublicPosts *[]models.Post
 }
 
+// config struct
 type config struct {
 	port          string
 	environment   string
 	db            psqlConfig
 	objectStorage objectStorageConfig
+	secureCookies bool
 }
 
+type objectStorageConfig struct {
+	objectStorageURL         string
+	serveStaticObjectStorage bool
+}
+
+// database config struct
 type psqlConfig struct {
+	local    bool
 	host     string
 	port     string
 	user     string
@@ -57,11 +79,19 @@ type psqlConfig struct {
 	dsn      string
 }
 
+// database config methods
 func (c *psqlConfig) setDSN() {
-	c.dsn = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", c.host, c.port, c.user, c.password, c.name)
+	c.dsn = fmt.Sprintf(
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		c.host,
+		c.port,
+		c.user,
+		c.password,
+		c.name,
+	)
 }
 
-func (c *psqlConfig) setDevDSN() {
+func (c *psqlConfig) setLocalDSN() {
 	c.dsn = fmt.Sprintf("host=%s port=%s dbname=%s sslmode=disable", c.host, c.port, c.name)
 }
 
@@ -69,89 +99,72 @@ func (c *psqlConfig) getDSN() string {
 	return c.dsn
 }
 
-type objectStorageConfig struct {
-	objectStorageURL         string
-	serveStaticObjectStorage bool
-}
+////////////////////////////////////////
+////////// MAIN FUNCTION ///////////////
+////////////////////////////////////////
 
 func main() {
+	// Initialize logger
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+
+	///////// Initialize Config and Set ENV Variables /////////
 	var cfg config
-	// Set port to 8080 if not set
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-	cfg.port = port
-
-	// Set environment to development if not set
-	env := os.Getenv("GOENV")
-	if env == "" {
-		env = "development"
-	}
-	cfg.environment = env
-
-	flag.BoolVar(&cfg.objectStorage.serveStaticObjectStorage, "object-storage", false, "Serve static files from object storage")
+	portFlag := flag.String("port", "8080", "HTTP port")
+	envFlag := flag.String("env", "development", "Environment")
+	// Parse command-line flags
+	objStorageFlag := flag.Bool(
+		"object-storage",
+		false,
+		"Serve static files from object storage",
+	)
 
 	flag.Parse()
 
+	// Check if ENV variables exist, if so override the flag values
+	// set port variable
+	cfg.setHostPortEnv(*portFlag, logger)
+	// set development enviornment variable
+	cfg.setGoEnv(*envFlag, logger)
+	// set object storage flag
+	cfg.setUseObjStorage(*objStorageFlag, logger)
+
+	// Set secure cookies based on environment
+	cfg.setEnviornmentDependentVariables()
+
+	// Configure object storage if enabled
 	if cfg.objectStorage.serveStaticObjectStorage {
-		osURL := os.Getenv("OBJECT_STORAGE_URL")
-		if osURL == "" {
-			log.Fatal("OBJECT_STORAGE_URL must be set when object storage is enabled")
-		}
-		targetFile := fmt.Sprintf("%s/static/dist/js/form-prevent.js", osURL)
-		// #nosec G107
-		resp, err := http.Get(targetFile)
-		if err != nil {
-			log.Fatal("Unable to connect to object storage")
-		}
-		if resp.StatusCode != http.StatusOK {
-			log.Fatal("Unable to connect to object storage")
-		}
-		cfg.objectStorage.objectStorageURL = osURL
+		cfg.setObjectStorageURL()
 	}
 
-	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+	////// Initialize Database and Session //////
 
-	cfg.db.host = os.Getenv("DBHOST")
-	cfg.db.port = os.Getenv("DBPORT")
-	cfg.db.name = os.Getenv("DBNAME")
-	cfg.db.user = os.Getenv("DBUSER")
-	cfg.db.password = os.Getenv("DBPASSWORD")
+	// Configure database connection
+	cfg.configDBConnection()
 
-	if cfg.environment == "development" {
-		cfg.db.setDevDSN()
-	} else {
-		cfg.db.setDSN()
-	}
-
-	db, err := gorm.Open(postgres.Open(cfg.db.getDSN()), &gorm.Config{})
+	// Connect and migrate database
+	db, err := cfg.connectAndMigrateDB(logger)
 	if err != nil {
-		panic("failed to connect database")
+		logger.Error("failed to connect or migrate database", "error", err)
+		panic("failed to connect or migrate database")
 	}
 
-	err = db.AutoMigrate(&models.User{}, &models.Post{}, &models.Tag{}, &models.Meta{}, &models.Category{})
+	// Initialize session manager
+	sessionManager, err := initializeSessionManager(db)
 	if err != nil {
-		log.Fatal(err)
+		logger.Error("unable to initialize session manager", "error", err)
+		panic("failed to initialize session manager")
 	}
 
-	logger.Info("Successfully connected to the database", "dsn", cfg.db.dsn)
-
-	sessionManager := scs.New()
-	sessionManager.Store, err = gormstore.New(db)
-	if err != nil {
-		log.Fatal(err)
-	}
-	sessionManager.Lifetime = 24 * 7 * time.Hour
+	/////// Initialize Application Struct ////////
 
 	// Initialize form decoder
 	formDecoder := form.NewDecoder()
 
-	// Initialize page templates
+	// Initialize page and partial templates
 	pageTemplates := template.CreatePageTemplates()
-	// Initialize partial templates
 	partialTemplates := template.CreatePartialTemplates()
 
+	// Create application struct
 	app := &application{
 		logger:           logger,
 		cfg:              &cfg,
@@ -170,31 +183,9 @@ func main() {
 		app.logger.Error("Unable to update posts on app struct", "error", err)
 	}
 
-	meta := models.Meta{
-		Version:     version,
-		Name:        "personal-site",
-		LastUpdated: "2024-07-22",
-		Description: "A simple web application",
-		Author:      "Tim Engle",
-		Environment: "Development",
-		BuildNumber: "1",
-		License:     "MIT",
-	}
+	fetchedMeta := app.fetchOrInsertMetaData()
 
-	fetchedMeta, err := app.meta.GetMostRecentMeta()
-	if err != nil {
-		app.logger.Error("Unable to fetch most recent meta", "error", err)
-	}
-
-	if fetchedMeta == nil || fetchedMeta.Version != meta.Version || fetchedMeta.LastUpdated != meta.LastUpdated {
-		err = app.meta.InsertMeta(meta)
-		if err != nil {
-			logger.Error("Unable to insert meta", "error", err)
-		} else {
-			logger.Info("Successfully inserted meta")
-		}
-	}
-
+	/////// Configure and start the HTTP server ///////
 	srv := &http.Server{
 		Addr:         ":" + cfg.port,
 		Handler:      app.routes(),

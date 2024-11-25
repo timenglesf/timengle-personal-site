@@ -29,6 +29,7 @@ type PostModelInterface interface {
 	LatestPosts(includePrivatePosts bool) ([]Post, error)
 	MostRecentPost(includePrivatePosts bool) (*Post, error)
 	GetPosts(includePrivatePosts bool, page int, pageSize int) ([]Post, error)
+	GetAllPosts(includePrivatePosts bool) ([]Post, error)
 	Update(p *Post) error
 	Count(includePrivatePosts bool) (int64, error)
 	GetPostByID(id uint) (*Post, error)
@@ -98,6 +99,15 @@ func (m *PostModel) GetPosts(includePrivatePosts bool, page int, pageSize int) (
 	var posts []Post
 	offset := (page - 1) * pageSize
 	result := m.DB.Preload("Tags").Preload("Categories").Order("created_at DESC").Limit(pageSize).Offset(offset).Find(&posts)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return posts, nil
+}
+
+func (m *PostModel) GetAllPosts(includePrivatePosts bool) ([]Post, error) {
+	var posts []Post
+	result := m.DB.Preload("Tags").Preload("Categories").Where("private = ?", includePrivatePosts).Order("created_at DESC").Find(&posts)
 	if result.Error != nil {
 		return nil, result.Error
 	}
